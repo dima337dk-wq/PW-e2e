@@ -1,6 +1,10 @@
 import {expect, test} from "@playwright/test";
+import {faker} from "@faker-js/faker/locale/ar";
+import * as dotenv from 'dotenv';
+dotenv.config();
 
-const appUrl = "https://fe-delivery.tallinn-learning.ee/signin";
+const appUrl = process.env.APP_URL || "http://localhost:3000";
+
 
 test.beforeEach(async ({ page }) => {
     await page.goto(appUrl);
@@ -12,7 +16,7 @@ test('Login button is disabled if one field is empty', async ({ page }) => {
     const signInButton = page.getByTestId("signIn-button");
 
     await expect(signInButton).toBeEnabled();
-    await loginField.fill("test");
+    await loginField.fill(faker.internet.username());
     await expect(signInButton).toBeDisabled();
 });
 
@@ -22,8 +26,8 @@ test('Auth error modal is visible if credentials are wrong', async ({ page }) =>
     const signInButton = page.getByTestId("signIn-button");
     const authErrorPopup = page.getByTestId("authorizationError-popup");
 
-    await loginField.fill("test");
-    await passwordField.fill("fwerfhguewrygferg");
+    await loginField.fill(faker.internet.username());
+    await passwordField.fill(faker.internet.password());
     await signInButton.click();
 
     await expect(authErrorPopup).toBeVisible();
